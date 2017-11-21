@@ -4,14 +4,6 @@
 # Code written by Nicholas J Lyon
   ## Updated Nov. 21, 2017
 
-# PURPOSE:
-  ## Conduct multiple pairwise comparisons and adjust for this by modifying the critical point
-      ### So far this does sequential Bonferroni without other options, but more will be coming
-  ## This differs importantly from the "pairwise.t.test" function in the "stats" package
-  ## As that function modifies the *p value* rather than the *critical point*,
-  ## such that all interpretations can be made at alpha = 0.05
-  ## While convenient, this would lead you to report an incorrect critical point in the body of your results
-
 # clear environment and set working directory
 rm(list = ls())
 setwd("~/Documents/School/Misc R/Custom Functions")
@@ -67,17 +59,17 @@ library(lme4)
 mxef <- lmer(response ~ factor +(1|random), data = working.df)
 summary(mxef)
 
-# A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value' output
-# While thinking is encouraged, it is helpful to have a p value to aid in interpreting results
-# Especially for those among us who are less statistically-inclined
-
-# This function reports mixed-effect model significance via t statistic and p value
-  # Hence the name "memsig" (mixed-effect model = MEM + significance)
+# PURPOSE:
+  ## A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value' output
+  ## While thinking is encouraged, it is helpful to have a p value to aid in interpreting results
+  ## Especially for those among us who are less statistically-inclined
+  ## This function reports mixed-effect model significance via t statistic and p value
+    ### Hence the name "memsig" (mixed-effect model = MEM + significance)
 
 # Load the function
 memsig <- function(model, man.dig){
   ## model = object of mixed-effect model fitted by lme4::lmer
-  ## mandig = manual setting of the number of digits for p value reporting
+  ## man.dig = manual setting of the number of digits for p value reporting
   
   # Load in the table of summary results that comes with the model
   summary <- data.frame(coef(summary(model)))
@@ -101,7 +93,19 @@ memsig(model = mxef, man.dig = 4)
 ##  -------------------------------------  ##
       # Pairwise Comparisons
 ##  -------------------------------------  ##
+# Let's change perspective slightly here and start ignoring that random effect
+# Say you have your beautiful 20-replicates-per-treatment-level dataset and want to do pairwise comparisons
+  ## without considering the random effect we kept in earlier
 
+# PURPOSE:
+  ## Conduct multiple pairwise comparisons and adjust for this by modifying the critical point
+  ## This differs importantly from the "pairwise.t.test" function in the "stats" package
+  ## As that function modifies the *p value* rather than the *critical point*,
+  ## such that all interpretations can be made at alpha = 0.05
+  ## While convenient, this would lead you to report an incorrect critical point in the body of your results
+
+
+# So far this does sequential Bonferroni without other options, but more will be coming
 
 
 #CREATE PAIRSTEST FUNCTION
