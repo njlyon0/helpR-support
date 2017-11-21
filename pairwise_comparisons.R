@@ -17,6 +17,9 @@ rm(list = ls())
 setwd("~/Documents/School/Misc R/Custom Functions")
   ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
 
+##  -------------------------------------  ##
+      # Dummy Data Creation
+##  -------------------------------------  ##
 # Let's get some dummy data from the vegan package to test this
 data("varespec")
 
@@ -30,14 +33,26 @@ factor <- as.vector(c(rep.int("a", (nrow(varespec)/4)),
                       rep.int("d", (nrow(varespec)/4))))
   ## It doesn't matter if this is significant or not as we just want to test my function
 
-# And just in case, let's give it a random effect column
+# And just to make it a little more relevant to many people, let's give it a random effect for mixed-effect models
 ran <- c("X", "X", "Y", "Y")
 random <- as.vector(rep(ran, (nrow(varespec)/4) ))
 
 # Get all that into a dataframe
 working.df <- as.data.frame(cbind(factor, random, response))
+working.df$response <- as.numeric(as.character(working.df$response))
+
+##  -------------------------------------  ##
+    # Mixed-Effect Model Fitting
+##  -------------------------------------  ##
+
 
 # Need this library to fit a mixed-effect model
+library(lme4)
+
+# Fit a mixed-effect model
+mxef <- lmer(response ~ factor +(1|random), data = working.df)
+summary(mxef)
+
 
 
 
@@ -59,6 +74,13 @@ memsig <- function(model){
   output$pval <- 2 * (1 - pt(abs(output$t.value), df))
   return(output)
 }
+
+
+##  -------------------------------------  ##
+      # Pairwise Comparisons
+##  -------------------------------------  ##
+
+
 
 #CREATE PAIRSTEST FUNCTION
 pairstest <- function(response, explanatory){
