@@ -4,16 +4,13 @@
 # Code written by Nick Lyon
     ## refer questions to njlyon@iastate.edu if insoluble problems arise
 
-# This function does an non-metric multidimensional scaling (NMS) ordination for you
-
-# Press the arrow to the left of the function to get it to expand.
-    ## Each bit has a comment explaining it and there is example syntax and descriptions of what the function needs within the function code
+# This function performs a non-metric multidimensional scaling (NMS) ordination for you
 
 # Colors are colorblind safe and found here:
   # http://colorbrewer2.org/#type=sequential&scheme=GnBu&n=4
 
 # Code written by Nick Lyon
-## Updated 11/13/17
+  ## Updated 11/13/17
 
 # Only need this library for the code to work
 library(vegan)
@@ -38,11 +35,11 @@ ref <- cbind(factor, as.data.frame(resp))
 
 # Run the model
 mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
-## Where "resp" is the matrix of your community data (without grouping variables)
+  ## Where "resp" is the matrix of your community data (without grouping variables)
 
 mds$stress
-##  "Stress" is typically reported parenthetically for NMS ordinations,
-## Similar to F statistics or p values
+  ##  "Stress" is typically reported parenthetically for NMS ordinations,
+  ## Similar to F statistics or p values
 
 # Actual function (only works for four groups, but that is easily modified by you)
 nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
@@ -55,23 +52,29 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
   # Create plot
   plot(mod, display = 'sites', choice = c(1, 2), type = 'none', xlab = "", ylab = "")
   
+  # Set colors (easier for you to modify if we set this now and call these objects later)
+  col1 <- "#fee090" # yellow
+  col2 <- "#d73027" # red
+  col3 <- "#abd9e9" # light blue
+  col4 <- "#4575b4" # blue
+  
   # Add points for each group with a different color per group
-  points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = "#fee090") # yellow
-  points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 22, bg = "#d73027") # red
-  points(mod$points[groupcol == g3, 1], mod$points[groupcol == g3, 2], pch = 23, bg = "#abd9e9") # lite blue
-  points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 24, bg = "#4575b4") # blue
+  points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = col1)
+  points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 22, bg = col2)
+  points(mod$points[groupcol == g3, 1], mod$points[groupcol == g3, 2], pch = 23, bg = col3)
+  points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 24, bg = col4)
   ## As of right now the colors are colorblind safe and each group is also given its own shape
   
   # Ordinate SD ellipses around the centroid
   library(vegan) # need this package for the following function
   ordiellipse(mod, groupcol, 
-              col = c(g1 = "#fee090", g2 = "#d73027", g3 = "#abd9e9", g4 = "#4575b4"),
+              col = c(g1 = col1, g2 = col2, g3 = col3, g4 = col4),
               display = "sites", kind = "sd", lwd = 2, label = F)
   
   # Add legend
   legend(legpos, legend = legcont, bty = "n", 
          pch = c(21, 22, 23, 24), cex = 1.15, 
-         pt.bg = c("#fee090", "#d73027", "#abd9e9", "#4575b4"))
+         pt.bg = c(col1, col2, col3, col4))
   
 }
 
