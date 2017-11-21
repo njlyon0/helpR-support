@@ -49,46 +49,8 @@ working.df$response <- as.numeric(as.character(working.df$response))
     ## Because this one was added entirely after the fact, it is unlikely to have any effect, but
       ## don't we frequently hope that our random effect isn't altering our treatment response?
 
-##  -------------------------------------  ##
-    # Mixed-Effect Model Fitting
-##  -------------------------------------  ##
-# Need this library to fit a mixed-effect model
-library(lme4)
-
-# Fit a mixed-effect model
-mxef <- lmer(response ~ factor +(1|random), data = working.df)
-summary(mxef)
-
-# PURPOSE:
-  ## A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value' output
-  ## While thinking is encouraged, it is helpful to have a p value to aid in interpreting results
-  ## Especially for those among us who are less statistically-inclined
-  ## This function reports mixed-effect model significance via t statistic and p value
-    ### Hence the name "memsig" (mixed-effect model = MEM + significance)
-
-# Load the function
-memsig <- function(model, man.dig){
-  ## model = object of mixed-effect model fitted by lme4::lmer
-  ## man.dig = manual setting of the number of digits for p value reporting
-  
-  # Load in the table of summary results that comes with the model
-  summary <- data.frame(coef(summary(model)))
-  
-  # For Kenward-Roger approximation of degrees of freedom
-  require(pbkrtest)
-  summary$df <- as.numeric(get_ddf_Lb(model, fixef(model)))
-  
-  # Calculate p value from degrees of freedom and t statistic
-  pvalues <- 2 * (1 - stats::pt(abs(summary$t.value), summary$df))
-  
-  # Turn the p value into an interpretable four-digit code (for easy reporting without huge negative exponents)
-  summary$pval <- round(pvalues, digits = man.dig)
-  
-  # Return the table of summary information
-  return(summary)
-}
-
-memsig(model = mxef, man.dig = 4)
+# Check it out!
+str(working.df)
 
 ##  -------------------------------------  ##
       # Pairwise Comparisons
