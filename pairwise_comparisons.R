@@ -32,12 +32,8 @@ factor <- as.vector(c(rep.int("a", (length(response)/4)),
                       rep.int("c", (length(response)/4)), 
                       rep.int("d", (length(response)/4))))
 
-# And it might be valuable to have another factor variable to use as a random effect
-ran <- c(rep.int("X", 10), rep.int("Y", 10))
-random <- as.vector(rep(ran, (length(response)/4) ))
-
 # Get all that into a dataframe
-working.df <- as.data.frame(cbind(factor, random, response))
+working.df <- as.data.frame(cbind(factor, response))
 working.df$response <- as.numeric(as.character(working.df$response))
 
 # To summarize:
@@ -55,6 +51,12 @@ str(working.df)
 ##  -------------------------------------  ##
       # Pairwise Comparisons
 ##  -------------------------------------  ##
+# First you analyze your data to see if your grouping variable is significant
+aov.fit <- aov(response ~ factor, data = working.df)
+summary(aov.fit)
+  ## Quelle surprise, at least one factor is significantly different from the others!
+
+# Now you want to know **which** levels are different from the others!
 
 # PURPOSE:
   ## Conduct multiple pairwise comparisons and adjust for this by modifying the critical point
@@ -67,27 +69,48 @@ str(working.df)
     ## Sequential Bonferroni
     ## more to come!
 
-
-#CREATE PAIRSTEST FUNCTION
-pairstest <- function(response, explanatory){
-  pairsfxn <- pairwise.t.test(response, explanatory, p.adj = "none")
-  factors <- expand.grid(rownames(pairsfxn$p.value), colnames(pairsfxn$p.value))
-  output <- NULL
-  output$pairs <- paste0(factors$Var1, "-", factors$Var2) 
-  output$pvals <- as.vector(pairsfxn$p.value)
-  output <- as.data.frame(output)
-  output <- output[complete.cases(output),]
-  output <- output[order(output$pvals),]
-  output$rank <- c(1:length(output$pairs))
-  output$alpha <- with(output, ( (0.05 / (length(output$pairs) + 1 - rank)) ) )
-  output$sig <- with(output, (pvals < alpha))
+# Load the function
+pairstest <- function(dependent, indep){
   
-  return(output)
+  # Get the unadjusted p values for multiple comparisons
+  pairs.unadj <- pairwise.t.test(dependent, indep, p.adj = "none")
+  
+  # Want a list of the pairwise comparisons from the matrix in "pairs.unadj"
+  combinations <- expand.grid(rownames(pairs.unadj$p.value), colnames(pairs.unadj$p.value))
+  
+  # Now you want to make a results dataframe to hold adjusted  p values
+  results <- NULL
+  
+  # List the actual pairwise combinations
+  results$pairs <- paste0(combinations$Var1, "-", combinations$Var2) 
+  
+  # List unadjusted p values
+  results$pvals <- as.vector(pairs.unadj$p.value)
+  
+  # Get the set of pairwise comparisons and their associated p values into dataframe format
+  results <- as.data.frame(results)
+  
+  # Ditch pairwise combinations for which there isn't a p value
+  results <- results[complete.cases(results),]
+      ## Comparisons of a group to itself or redundant comparisons (E.g. a to b = b to a, etc.)
+  
+  # For sequential Bonferroni you need to rank the pairs based on ascending p value
+  results <- results[order(results$pvals),] # order the comparisons
+  results$rank <- c(1:length(results$pairs)) # assign them a rank based on this order
+  
+  # Modify the critical point based on the rank of each sequential p value
+  results$alpha <- with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) )
+    ## The name of this method makes sense now right?
+  
+  # And just to make it painfully easy, this provides a logical where TRUE means p < alpha (i.e. significant)
+  # and FALSE means p > alpha (i.e. non-significant)
+  results$sig <- with(results, (pvals < alpha))
+  
+  return(results)
 }
 
-# ANALYSIS
-memsig()
-pairstest(dat$x, dat$x)
+# Run the pairwise comprison test!
+pairstest(dependent = working.df$response, indep = working.df$factor)
 
 
 
