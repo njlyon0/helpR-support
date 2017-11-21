@@ -1,9 +1,8 @@
-##  --------------------------------------------------------------------------------  ##
-                            # NMS Function
-##  --------------------------------------------------------------------------------  ##
+##  ----------------------------------------------------------------------------------------------------------  ##
+            # Non-metric Multidimensional Scaling (NMS) Ordination Function
+##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nick Lyon
     ## refer questions to njlyon@iastate.edu if insoluble problems arise
-
 
 # This function does an non-metric multidimensional scaling (NMS) ordination for you
 
@@ -13,39 +12,78 @@
 # Colors are colorblind safe and found here:
   # http://colorbrewer2.org/#type=sequential&scheme=GnBu&n=4
 
-# Functions that plot NMS points with different colors for groups (only works for number of groups corresponding to name of fxn)
-nms4plot <- function(mod, groupcol, g1, g2, g3, g4, legpos, legcont) {
-  ## mod = object returned by metaMDS function 
-  ## groupcol = group column FROM THE DF THAT CONTAINS THAT COLUMN
-  ## g1 - 4 = grouping variables as written in dataframe (this MUST be written as it is in the dataframe)
+# Code written by Nick Lyon
+## Updated 11/13/17
+
+# Only need this library for the code to work
+library(vegan)
+  ## It's also included within the function, but better safe than sorry
+
+# Clear the environment so the function doesn't catch on something strange and user-specific
+rm(list = ls())
+
+# Also, set your working directory to the location where your project is (and delete my WD code here)
+setwd("~/Documents/School/Misc R/Custom Functions")
+  ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
+
+# Let's use some of the data from the vegan package to demonstrate the function
+data("varespec")
+resp <- varespec
+  ## Data on lichen "pastures", can check it out with: 
+?varespec
+
+# We do need a group column though for this ordination function
+factor <- as.vector(c(rep.int("a", (nrow(resp)/4)), rep.int("b", (nrow(resp)/4)), rep.int("c", (nrow(resp)/4)), rep.int("d", (nrow(resp)/4))))
+ref <- cbind(factor, as.data.frame(resp))
+
+# Run the model
+mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
+## Where "resp" is the matrix of your community data (without grouping variables)
+
+mds$stress
+##  "Stress" is typically reported parenthetically for NMS ordinations,
+## Similar to F statistics or p values
+
+# Actual function (only works for four groups, but that is easily modified by you)
+nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
+  ## mod = object returned by metaMDS
+  ## groupcol = group column in the dataframe that contains those (not the community matrix)
+  ## g1 - g4 = how each group appears in your dataframe (in quotes)
+  ## legcont = single object for what you want the content of the legend to be
   ## legpos = legend position, either numeric vector of x/y coords or shorthand accepted by "legend" function
-  ## legcont = legend content, vector of labels for legend (this can be anything you want)
-  
-  ###############
-  # EXAMPLE SYNTAX
-  ###############
-  #  nec1.mds <- metaMDS(dataframe, autotransform = F, expand = F, k = 2, try = 100)
-      ## NOTE: This argument requires the dataframe that has no non-numeric columns but is otherwise identical to your 'full' df
-  #  nms4plot(nec1.mds, as.factor(nec_r1$Fescue.Treatment), "Ref", "Con", "Spr", "SnS", "bottomleft", c("Ref", "Con", "Spr", "SnS"))
-      ## In this case, "nec1.mds" is what was returned by the metaMDS
-      ## But "nec_r1" is the dataframe that includes by grouping variables
-  
   
   # Create plot
   plot(mod, display = 'sites', choice = c(1, 2), type = 'none', xlab = "", ylab = "")
   
   # Add points for each group with a different color per group
-  points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = "#0868ac")
-  points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 21, bg = "#43a2ca")
-  points(mod$points[groupcol == g3, 1], mod$points[groupcol == g3, 2], pch = 21, bg = "#7bccc4")
-  points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 21, bg = "#bae4bc")
+  points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = "#fee090") # yellow
+  points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 22, bg = "#d73027") # red
+  points(mod$points[groupcol == g3, 1], mod$points[groupcol == g3, 2], pch = 23, bg = "#abd9e9") # lite blue
+  points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 24, bg = "#4575b4") # blue
+  ## As of right now the colors are colorblind safe and each group is also given its own shape
   
   # Ordinate SD ellipses around the centroid
-  ordiellipse(mod, groupcol, col = c("#0868ac", "#43a2ca", "#7bccc4", "#bae4bc"), display = "sites", kind = "sd", label = F)
+  library(vegan) # need this package for the following function
+  ordiellipse(mod, groupcol, 
+              col = c(g1 = "#fee090", g2 = "#d73027", g3 = "#abd9e9", g4 = "#4575b4"),
+              display = "sites", kind = "sd", lwd = 2, label = F)
   
   # Add legend
-  legend(legpos, legend = legcont, bty = "n", fill = c("#0868ac", "#43a2ca", "#7bccc4", "#bae4bc"))
+  legend(legpos, legend = legcont, bty = "n", 
+         pch = c(21, 22, 23, 24), cex = 1.15, 
+         pt.bg = c("#fee090", "#d73027", "#abd9e9", "#4575b4"))
   
 }
 
+# Example syntax
+jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
+
+nms.ord(mds, # object returned by metaMDS
+        ref$factor, # grouping column of the dataframe
+        "a", "b", "c", "d", # entries for groups 1 through 4
+        c("A", "B", "C", "D"), # entry for legcont (must be single object, hence the "c(...)")
+          # This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
+        "bottomright") # legend position shorthand
+
+dev.off() # for saving
 
