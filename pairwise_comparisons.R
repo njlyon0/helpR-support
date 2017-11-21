@@ -21,7 +21,7 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 group1 <- as.vector( rnorm(20, mean = 10, sd = 1) )
 group2 <- as.vector( rnorm(20, mean = 3, sd = 1) )
 group3 <- as.vector( rnorm(20, mean = 5, sd = 1) )
-group4 <- as.vector( rnorm(20, mean = 10, sd = 4) )
+group4 <- as.vector( rnorm(20, mean = 10, sd = 1) )
 
 # Get all that into a single column
 response <- as.vector(c(group1, group2, group3, group4))
@@ -106,6 +106,50 @@ memsig(model = mxef, man.dig = 4)
 
 
 # So far this does sequential Bonferroni without other options, but more will be coming
+
+
+
+# Want to simulate data so that you have sufficient replicates
+## While it doesn't really matter if the pairwise comparisons are significant,
+## you don't want the function's efficacy to be confounded by low statistical power
+
+# Simulate data that are normally distributed and have different means/variances
+## Increase the odds of at least one compairson being signficant
+group1x <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group2x <- as.vector( rnorm(20, mean = 3, sd = 1) )
+group3x <- as.vector( rnorm(20, mean = 5, sd = 1) )
+group4x <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group1y <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group2y <- as.vector( rnorm(20, mean = 3, sd = 1) )
+group3y <- as.vector( rnorm(20, mean = 5, sd = 1) )
+group4y <- as.vector( rnorm(20, mean = 10, sd = 1) )
+
+# Get all that into a single column
+response <- as.vector(c(group1, group2, group3, group4))
+
+# Now you want a grouping variable
+factor <- as.vector(c(rep.int("a", (length(response)/4)), 
+                      rep.int("b", (length(response)/4)), 
+                      rep.int("c", (length(response)/4)), 
+                      rep.int("d", (length(response)/4))))
+
+# And it might be valuable to have another factor variable to use as a random effect
+ran <- c(rep.int("X", 10), rep.int("Y", 10))
+random <- as.vector(rep(ran, (length(response)/4) ))
+
+# Get all that into a dataframe
+working.df <- as.data.frame(cbind(factor, random, response))
+working.df$response <- as.numeric(as.character(working.df$response))
+
+# To summarize:
+# You have 80 observations of some response
+# These are grouped into four levels of a treatment "factor"
+## either 'a', 'b', 'c', or 'd'
+# And within each of these four levels you have one of two potential random effects "random"
+## either 'X' or 'Y'
+## Because this one was added entirely after the fact, it is unlikely to have any effect, but
+## don't we frequently hope that our random effect isn't altering our treatment response?
+
 
 
 #CREATE PAIRSTEST FUNCTION
