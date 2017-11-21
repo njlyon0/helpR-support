@@ -20,32 +20,46 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 ##  -------------------------------------  ##
       # Dummy Data Creation
 ##  -------------------------------------  ##
-# Let's get some dummy data from the vegan package to test this
-data("varespec")
+# Want to simulate data so that you have sufficient replicates
+  ## While it doesn't really matter if the pairwise comparisons are significant,
+  ## you don't want the function's efficacy to be confounded by low statistical power
 
-# Only need one response column for pairwise comparisons so let's ditch the others
-response <- varespec$Cladrang
+# Simulate data that are normally distributed and have different means/variances
+  ## Increase the odds of at least one compairson being signficant
+group1 <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group2 <- as.vector( rnorm(20, mean = 3, sd = 1) )
+group3 <- as.vector( rnorm(20, mean = 5, sd = 1) )
+group4 <- as.vector( rnorm(20, mean = 10, sd = 4) )
 
-# Need a faux-grouping variable too for pairwise comparisons among
-factor <- as.vector(c(rep.int("a", (nrow(varespec)/4)), 
-                      rep.int("b", (nrow(varespec)/4)), 
-                      rep.int("c", (nrow(varespec)/4)), 
-                      rep.int("d", (nrow(varespec)/4))))
-  ## It doesn't matter if this is significant or not as we just want to test my function
+# Get all that into a single column
+response <- as.vector(c(group1, group2, group3, group4))
 
-# And just to make it a little more relevant to many people, let's give it a random effect for mixed-effect models
-ran <- c("X", "X", "Y", "Y")
-random <- as.vector(rep(ran, (nrow(varespec)/4) ))
+# Now you want a grouping variable
+factor <- as.vector(c(rep.int("a", (length(response)/4)), 
+                      rep.int("b", (length(response)/4)), 
+                      rep.int("c", (length(response)/4)), 
+                      rep.int("d", (length(response)/4))))
+
+# And it might be valuable to have another factor variable to use as a random effect
+ran <- c(rep.int("X", 10), rep.int("Y", 10))
+random <- as.vector(rep(ran, (length(response)/4) ))
 
 # Get all that into a dataframe
 working.df <- as.data.frame(cbind(factor, random, response))
 working.df$response <- as.numeric(as.character(working.df$response))
 
+# To summarize:
+  # You have 80 observations of some response
+  # These are grouped into four levels of a treatment "factor"
+    ## either 'a', 'b', 'c', or 'd'
+  # And within each of these four levels you have one of two potential random effects "random"
+    ## either 'X' or 'Y'
+    ## Because this one was added entirely after the fact, it is unlikely to have any effect, but
+      ## don't we frequently hope that our random effect isn't altering our treatment response?
+
 ##  -------------------------------------  ##
     # Mixed-Effect Model Fitting
 ##  -------------------------------------  ##
-
-
 # Need this library to fit a mixed-effect model
 library(lme4)
 
@@ -53,28 +67,36 @@ library(lme4)
 mxef <- lmer(response ~ factor +(1|random), data = working.df)
 summary(mxef)
 
+# A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value' output
+# While thinking is encouraged, it is helpful to have a p value to aid in interpreting results
+# Especially for those among us who are less statistically-inclined
 
+# This function reports mixed-effect model significance via t statistic and p value
+  # Hence the name "memsig" (mixed-effect model = MEM + significance)
 
-
-
-
-
-
-
-#PAIRWISE TESTS OF LMER
-library(pbkrtest)
-
-#CREATE MEMSIG FUNCTION
-memsig <- function(model){
-  # For Kenward-Roger approximation of df, t-dist, and p-values
+# Load the function
+memsig <- function(model, man.dig){
+  ## model = object of mixed-effect model fitted by lme4::lmer
+  ## mandig = manual setting of the number of digits for p value reporting
+  
+  # Load in the table of summary results that comes with the model
+  summary <- data.frame(coef(summary(model)))
+  
+  # For Kenward-Roger approximation of degrees of freedom
   require(pbkrtest)
-  output <- NULL
-  output <- data.frame(coef(summary(model)))
-  df <- as.numeric(get_ddf_Lb(model, fixef(model)))
-  output$pval <- 2 * (1 - pt(abs(output$t.value), df))
-  return(output)
+  summary$df <- as.numeric(get_ddf_Lb(model, fixef(model)))
+  
+  # Calculate p value from degrees of freedom and t statistic
+  pvalues <- 2 * (1 - stats::pt(abs(summary$t.value), summary$df))
+  
+  # Turn the p value into an interpretable four-digit code (for easy reporting without huge negative exponents)
+  summary$pval <- round(pvalues, digits = man.dig)
+  
+  # Return the table of summary information
+  return(summary)
 }
 
+memsig(model = mxef, man.dig = 4)
 
 ##  -------------------------------------  ##
       # Pairwise Comparisons
