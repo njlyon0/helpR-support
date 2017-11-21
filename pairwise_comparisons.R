@@ -19,7 +19,7 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
 group1 <- as.vector( rnorm(20, mean = 10, sd = 1) )
-group2 <- as.vector( rnorm(20, mean = 3, sd = 1) )
+group2 <- as.vector( rnorm(20, mean = 5, sd = 1) )
 group3 <- as.vector( rnorm(20, mean = 5, sd = 1) )
 group4 <- as.vector( rnorm(20, mean = 10, sd = 1) )
 
@@ -70,7 +70,10 @@ summary(aov.fit)
     ## more to come!
 
 # Load the function
-pairstest <- function(dependent, indep){
+pairstest <- function(dependent, indep, man.dig){
+  ## dependent = response (or "dependent") variable
+  ## indep = explanatory (or "independent") variable
+  ## man.dig = manually set the digits you want the p value and critical point to be reported to
   
   # Get the unadjusted p values for multiple comparisons
   pairs.unadj <- pairwise.t.test(dependent, indep, p.adj = "none")
@@ -85,7 +88,7 @@ pairstest <- function(dependent, indep){
   results$pairs <- paste0(combinations$Var1, "-", combinations$Var2) 
   
   # List unadjusted p values
-  results$pvals <- as.vector(pairs.unadj$p.value)
+  results$pvals <- as.vector( round(pairs.unadj$p.value, digits = man.dig) )
   
   # Get the set of pairwise comparisons and their associated p values into dataframe format
   results <- as.data.frame(results)
@@ -94,23 +97,32 @@ pairstest <- function(dependent, indep){
   results <- results[complete.cases(results),]
       ## Comparisons of a group to itself or redundant comparisons (E.g. a to b = b to a, etc.)
   
+  # START SEQUENTIAL BONFERRONI-SPECIFIC STUFF
+  
   # For sequential Bonferroni you need to rank the pairs based on ascending p value
   results <- results[order(results$pvals),] # order the comparisons
   results$rank <- c(1:length(results$pairs)) # assign them a rank based on this order
   
   # Modify the critical point based on the rank of each sequential p value
-  results$alpha <- with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) )
+  results$alpha <- round( with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) ), digits = man.dig)
     ## The name of this method makes sense now right?
+  
+  # END SEQUENTIAL BONFERRONI-SPECIFIC STUFF
   
   # And just to make it painfully easy, this provides a logical where TRUE means p < alpha (i.e. significant)
   # and FALSE means p > alpha (i.e. non-significant)
   results$sig <- with(results, (pvals < alpha))
   
+  
   return(results)
 }
 
 # Run the pairwise comprison test!
-pairstest(dependent = working.df$response, indep = working.df$factor)
+pairstest(dependent = working.df$response, indep = working.df$factor, man.dig = 4)
 
+# As a reminder:
+  ## When we simulated the data there was no difference between group A and group D
+  ## And also no difference between groups B and C
+  ## Therefor, if this function tells you those differences are significant, something has gone horribly wrong
 
 
