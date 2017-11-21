@@ -113,7 +113,6 @@ pairstest <- function(dependent, indep, man.dig){
   # and FALSE means p > alpha (i.e. non-significant)
   results$sig <- with(results, (pvals < alpha))
   
-  
   return(results)
 }
 
