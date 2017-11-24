@@ -105,7 +105,14 @@ pairstest <- function(dependent, indep, man.dig){
   
   # Modify the critical point based on the rank of each sequential p value
   results$alpha <- round( with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) ), digits = man.dig)
-    ## The name of this method makes sense now right?
+    ## Sequential bonferroni is calculated as show above, but in plain English it is like this:
+    ## Each comparison gets it's own, sequential, critical point
+    ## This is determined by dividing the standard critical point (0.05) by
+    ## the total number of comparisons plus 1, minus the "rank" of the p value
+    ## where lower p values have a lower rank
+    ## The final pairwise comparison will always have a critical point of 0.05 in this method
+      ### E.g. 6 pairwise comparisons + 1 - 6 (for the sixth one) = 1
+      ### And 0.05 / 1 = 0.05 (duh)
   
   # END SEQUENTIAL BONFERRONI-SPECIFIC STUFF
   
