@@ -70,10 +70,11 @@ summary(aov.fit)
     ## more to come!
 
 # Load the function
-pairstest <- function(dependent, indep, man.dig){
+pairstest <- function(dependent, indep, crit.dig, p.dig){
   ## dependent = response (or "dependent") variable
   ## indep = explanatory (or "independent") variable
-  ## man.dig = manually set the digits you want the p value and critical point to be reported to
+  ## crit.dig = digits for critical point reporting
+  ## p.dig = digits for p value reporting
   
   # Get the unadjusted p values for multiple comparisons
   pairs.unadj <- pairwise.t.test(dependent, indep, p.adj = "none")
@@ -88,7 +89,7 @@ pairstest <- function(dependent, indep, man.dig){
   results$pairs <- paste0(combinations$Var1, "-", combinations$Var2) 
   
   # List unadjusted p values
-  results$pvals <- as.vector( round(pairs.unadj$p.value, digits = man.dig) )
+  results$pvals <- as.vector( round(pairs.unadj$p.value, digits = p.dig) )
   
   # Get the set of pairwise comparisons and their associated p values into dataframe format
   results <- as.data.frame(results)
@@ -104,7 +105,7 @@ pairstest <- function(dependent, indep, man.dig){
   results$rank <- c(1:length(results$pairs)) # assign them a rank based on this order
   
   # Modify the critical point based on the rank of each sequential p value
-  results$alpha <- round( with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) ), digits = man.dig)
+  results$alpha <- round( with(results, ( (0.05 / (length(results$pairs) + 1 - rank)) ) ), digits = crit.dig)
     ## Sequential bonferroni is calculated as show above, but in plain English it is like this:
     ## Each comparison gets it's own, sequential, critical point
     ## This is determined by dividing the standard critical point (0.05) by
@@ -124,7 +125,7 @@ pairstest <- function(dependent, indep, man.dig){
 }
 
 # Run the pairwise comprison test!
-pairstest(dependent = working.df$response, indep = working.df$factor, man.dig = 4)
+pairstest(dependent = working.df$response, indep = working.df$factor, crit.dig = 3, p.dig = 5)
 
 # As a reminder:
   ## When we simulated the data there was no difference between group A and group D
