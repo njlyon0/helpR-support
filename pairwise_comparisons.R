@@ -121,6 +121,9 @@ pairstest <- function(dependent, indep, crit.dig, p.dig){
   # and FALSE means p > alpha (i.e. non-significant)
   results$sig <- with(results, (pvals < alpha))
   
+  # This is cosmetic; the re-ordering step makes the default row numbers non-sequential at this stage
+  row.names(results) <- NULL
+  
   return(results)
 }
 
@@ -131,5 +134,3 @@ pairstest(dependent = working.df$response, indep = working.df$factor, crit.dig =
   ## When we simulated the data there was no difference between group A and group D
   ## And also no difference between groups B and C
   ## Therefor, if this function tells you those differences are significant, something has gone horribly wrong
-
-
