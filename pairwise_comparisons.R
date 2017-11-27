@@ -128,9 +128,19 @@ pairstest <- function(dependent, indep, crit.dig, p.dig){
 }
 
 # Run the pairwise comprison test!
-pairstest(dependent = working.df$response, indep = working.df$factor, crit.dig = 3, p.dig = 5)
+pairstest(dependent = working.df$response, indep = working.df$factor, crit.dig = 4, p.dig = 5)
 
-# As a reminder:
+# If you would rather do Bonferroni (no sequential adjustment of critical point, so is more conservative)
+  # just compare all p values to the lowest critical point, as that is the traditional Bonferroni correction
+
+# Bonferroni correction = 0.05 / number comparisons
+# Sequential Bon = 0.05 / (number comparisons + 1 - rank of comparison i)
+
+# So the first comparison (i.e. of the comparison with rank 1) will yield 0.05 / (X + 1 - 1)
+# Identical to standard Bonferroni (0.05 / X)
+    ## Where "X" is the number of comparisons
+
+# As a reminder if you modify the function to do some different purpose:
   ## When we simulated the data there was no difference between group A and group D
   ## And also no difference between groups B and C
   ## Therefor, if this function tells you those differences are significant, something has gone horribly wrong
