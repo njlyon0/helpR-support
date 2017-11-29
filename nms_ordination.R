@@ -12,9 +12,12 @@
 # Code written by Nick Lyon
   ## Updated 11/13/17
 
-# Only need this library for the code to work
-library(vegan)
+# Required libraries
+#install.packages(c("vegan", "geomorph")) # delete the first hashtag and this line will install the packages
+library(vegan) # Need this library for NMS
   ## It's also included within the function, but better safe than sorry
+
+library(geomorph) # Need this library for analysis
 
 # Clear the environment so the function doesn't catch on something strange and user-specific
 rm(list = ls())
@@ -36,6 +39,28 @@ factor <- as.vector(c(rep.int("Trt1", (nrow(resp)/4)),
                       rep.int("Trt4", (nrow(resp)/4))) )
 ref <- cbind(factor, as.data.frame(resp))
 
+# ANALYSIS NOTE:
+  ## While NMS can be useful in visualizing multivariate differences, it is NOT an analytical tool!
+  ## Use of an actual multivariate analytical test is necessary if differences among groups are of interest
+  ## Feel free to skip through this section if you don't need/want help with multivariate analysis
+
+# STEPS NECESSARY FOR MULTIVARIATE ANALYSIS
+
+# Initial perMANOVA
+procD.lm(resp ~ factor, data = ref)
+  ## Interpretation: at least one group is significantly different from the others
+  ## Yes these groups don't mean anything, but it's still illustrative.
+
+# Want to know *which* groups were different from the others
+advanced.procD.lm(resp ~ factor, ~ 1, ~ factor, data = ref)
+  ## syntax is (Y ~ x, ~ null hypothesis, ~ grouping variable for pairwise comparisons, data = data)
+
+# Significance groups (different letter means significantly different)
+# Trt1 = A | Trt2 = A | Trt3 = A | Trt4 = B
+  # Only treatment 4 was different from all others
+
+# STEPS ACTUALLY REQUIRED FOR NMS ORDINATION
+
 # Run the model
 mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
   ## Where "resp" is the matrix of your community data (without grouping variables)
@@ -45,10 +70,11 @@ mds$stress
   ## Similar to F statistics or p values
 
 # Actual function (only works for four groups, but that is easily modified by you)
-nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
+nms.ord <- function(mod, groupcol, g1, g2, g3, g4, lntp1, lntp2, lntp3, lntp4, legcont, legpos) {
   ## mod = object returned by metaMDS
   ## groupcol = group column in the dataframe that contains those (not the community matrix)
   ## g1 - g4 = how each group appears in your dataframe (in quotes)
+  ## lntp1 - 4 = what sort of line each ellipse will be made of (accepts integers between 1 and 6 for diff lines)
   ## legcont = single object for what you want the content of the legend to be
   ## legpos = legend position, either numeric vector of x/y coords or shorthand accepted by "legend" function
   
@@ -61,6 +87,7 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
   col3 <- "#abd9e9" # light blue
   col4 <- "#4575b4" # blue
   
+  
   # Add points for each group with a different color per group
   points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = col1)
   points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 22, bg = col2)
@@ -68,11 +95,14 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
   points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 24, bg = col4)
   ## As of right now the colors are colorblind safe and each group is also given its own shape
   
+  # Get a single vector of your manually set line types for the ellipses
+  lntps <- c(lntp1, lntp2, lntp3, lntp4)
+  
   # Ordinate SD ellipses around the centroid
   library(vegan) # need this package for the following function
   ordiellipse(mod, groupcol, 
               col = c(g1 = col1, g2 = col2, g3 = col3, g4 = col4),
-              display = "sites", kind = "sd", lwd = 2, lty = 1, label = F)
+              display = "sites", kind = "sd", lwd = 2, lty = lntps, label = F)
   
   # Add legend
   legend(legpos, legend = legcont, bty = "n", 
@@ -84,33 +114,20 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
 # Example syntax
 nms.ord(mds, # object returned by metaMDS
         ref$factor, # grouping column of the dataframe
-        "Trt1", "Trt2", "Trt3", "Trt4", # entries for groups 1 through 4
-        c("1", "2", "3", "4"), # entry for legcont (must be single object, hence the "c(...)")
-        # This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
+        g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4", # entries for groups 1 through 4
+        lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5, # manual settings for ellipse line types
+        legcont = c("1", "2", "3", "4"), # entry for legcont (must be single object, hence the "c(...)")
+          ## This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
         "bottomright") # legend position shorthand
 
 # Saving procedure
 jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
 
-nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", c("1", "2", "3", "4"), "bottomright")
+nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 
+        lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5,
+        c("1", "2", "3", "4"), "bottomright")
 
 dev.off() # for saving
-
-# NOTE:
-  ## While NMS can be useful in visualizing multivariate differences, it is NOT an analytical tool!
-  ## Use of an actual multivariate analytical test is necessary if differences among groups are of interest
-
-# Example with perMANOVA (permutational Multivariate ANOVA)
-#install.packages("geomorph")
-library(geomorph)
-
-procD.lm(resp ~ factor, data = ref) # at least one group is significantly different from the others
-
-advanced.procD.lm(resp ~ factor, ~ 1, ~ factor, data = ref)
-# syntax is (Y ~ x, ~ null hypothesis, ~ grouping variable for pairwise comparisons, data = data)
-
-# Significance? (number of lowercase 'i's is the same in non-different groups)
-
 
 
 
