@@ -69,7 +69,7 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
   library(vegan) # need this package for the following function
   ordiellipse(mod, groupcol, 
               col = c(g1 = col1, g2 = col2, g3 = col3, g4 = col4),
-              display = "sites", kind = "sd", lwd = 2, label = F)
+              display = "sites", kind = "sd", lwd = 2, lty = 1, label = F)
   
   # Add legend
   legend(legpos, legend = legcont, bty = "n", 
