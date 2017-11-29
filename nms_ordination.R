@@ -30,7 +30,10 @@ resp <- varespec
 ?varespec
 
 # We do need a group column though for this ordination function
-factor <- as.vector(c(rep.int("a", (nrow(resp)/4)), rep.int("b", (nrow(resp)/4)), rep.int("c", (nrow(resp)/4)), rep.int("d", (nrow(resp)/4))))
+factor <- as.vector(c(rep.int("Trt1", (nrow(resp)/4)),
+                      rep.int("Trt2", (nrow(resp)/4)),
+                      rep.int("Trt3", (nrow(resp)/4)),
+                      rep.int("Trt4", (nrow(resp)/4))) )
 ref <- cbind(factor, as.data.frame(resp))
 
 # Run the model
@@ -81,15 +84,15 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
 # Example syntax
 nms.ord(mds, # object returned by metaMDS
         ref$factor, # grouping column of the dataframe
-        "a", "b", "c", "d", # entries for groups 1 through 4
-        c("A", "B", "C", "D"), # entry for legcont (must be single object, hence the "c(...)")
+        "Trt1", "Trt2", "Trt3", "Trt4", # entries for groups 1 through 4
+        c("1", "2", "3", "4"), # entry for legcont (must be single object, hence the "c(...)")
         # This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
         "bottomright") # legend position shorthand
 
 # Saving procedure
 jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
 
-nms.ord(mds, ref$factor, "a", "b", "c", "d", c("A", "B", "C", "D"), "bottomright")
+nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", c("1", "2", "3", "4"), "bottomright")
 
 dev.off() # for saving
 
@@ -105,6 +108,9 @@ procD.lm(resp ~ factor, data = ref) # at least one group is significantly differ
 
 advanced.procD.lm(resp ~ factor, ~ 1, ~ factor, data = ref)
 # syntax is (Y ~ x, ~ null hypothesis, ~ grouping variable for pairwise comparisons, data = data)
+
+# Significance? (number of lowercase 'i's is the same in non-different groups)
+
 
 
 
