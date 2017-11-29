@@ -79,14 +79,32 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4, legcont, legpos) {
 }
 
 # Example syntax
-jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
-
 nms.ord(mds, # object returned by metaMDS
         ref$factor, # grouping column of the dataframe
         "a", "b", "c", "d", # entries for groups 1 through 4
         c("A", "B", "C", "D"), # entry for legcont (must be single object, hence the "c(...)")
-          # This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
+        # This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
         "bottomright") # legend position shorthand
 
+# Saving procedure
+jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
+
+nms.ord(mds, ref$factor, "a", "b", "c", "d", c("A", "B", "C", "D"), "bottomright")
+
 dev.off() # for saving
+
+# NOTE:
+  ## While NMS can be useful in visualizing multivariate differences, it is NOT an analytical tool!
+  ## Use of an actual multivariate analytical test is necessary if differences among groups are of interest
+
+# Example with perMANOVA (permutational Multivariate ANOVA)
+#install.packages("geomorph")
+library(geomorph)
+
+procD.lm(resp ~ factor, data = ref) # at least one group is significantly different from the others
+
+advanced.procD.lm(resp ~ factor, ~ 1, ~ factor, data = ref)
+# syntax is (Y ~ x, ~ null hypothesis, ~ grouping variable for pairwise comparisons, data = data)
+
+
 
