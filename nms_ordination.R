@@ -123,9 +123,7 @@ nms.ord(mds, # object returned by metaMDS
 # Saving procedure
 jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
 
-nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 
-        lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5,
-        c("1", "2", "3", "4"), "bottomright")
+nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 1, 1, 1, 5, c("1", "2", "3", "4"), "bottomright")
 
 dev.off() # for saving
 
