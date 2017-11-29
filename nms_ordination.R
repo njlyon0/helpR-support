@@ -117,7 +117,7 @@ nms.ord(mds, # object returned by metaMDS
         g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4", # entries for groups 1 through 4
         lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5, # manual settings for ellipse line types
         legcont = c("1", "2", "3", "4"), # entry for legcont (must be single object, hence the "c(...)")
-          ## This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
+## This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
         "bottomright") # legend position shorthand
 
 # Saving procedure
