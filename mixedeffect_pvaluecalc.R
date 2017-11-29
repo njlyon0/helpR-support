@@ -18,13 +18,17 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
-group1 <- as.vector( rnorm(20, mean = 10, sd = 1) )
-group2 <- as.vector( rnorm(20, mean = 3, sd = 1) )
-group3 <- as.vector( rnorm(20, mean = 5, sd = 1) )
-group4 <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group1a <- as.vector( rnorm(10, mean = 10, sd = 1) )
+group2a <- as.vector( rnorm(10, mean = 4, sd = 1) )
+group3a <- as.vector( rnorm(10, mean = 5, sd = 1) )
+group4a <- as.vector( rnorm(10, mean = 10, sd = 1) )
+group1b <- as.vector( rnorm(10, mean = 10, sd = 3) )
+group2b <- as.vector( rnorm(10, mean = 4, sd = 3) )
+group3b <- as.vector( rnorm(10, mean = 5, sd = 3) )
+group4b <- as.vector( rnorm(10, mean = 10, sd = 3) )
 
 # Get all that into a single column
-response <- as.vector(c(group1, group2, group3, group4))
+response <- as.vector(c(group1a, group1b, group2a, group2b, group3a, group3b, group4a, group4b))
 
 # Now you want a grouping variable
 factor <- as.vector(c(rep.int("a", (length(response)/4)), 
@@ -59,21 +63,20 @@ library(lme4)
 # Fit a mixed-effect model
 mxef <- lmer(response ~ factor +(1|random), data = working.df)
 summary(mxef)
+  ## You get some summar statistics but no p values!
 
 # PURPOSE:
-  ## A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value' output
+  ## A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value'-style output
   ## While thinking is encouraged, it is helpful to have a p value to aid in interpreting results
   ## Especially for those among us who are less statistically-inclined
   ## This function reports mixed-effect model significance via t statistic and p value
     ### Hence the name "memsig" (mixed-effect model = MEM + significance)
 
 # Load the function
-memsig <- function(model, man.dig){
+memsig <- function(model, p.dig){
   ## model = object of mixed-effect model fitted by lme4::lmer
-  ## man.dig = manual setting of the number of digits for p value reporting
+  ## p.dig = manual setting of the number of digits for p value reporting
   
-  model <- mxef
-  man.dig <- 6
   # Load in the table of summary results that comes with the model
   summary <- data.frame(coef(summary(model)))
   
@@ -85,10 +88,17 @@ memsig <- function(model, man.dig){
   pvalues <- 2 * (1 - stats::pt(abs(summary$t.value), summary$df))
   
   # Turn the p value into an interpretable four-digit code (for easy reporting without huge negative exponents)
-  summary$pval <- round(pvalues, digits = man.dig)
+  summary$pval <- round(pvalues, digits = p.dig)
   
   # Return the table of summary information
   return(summary)
 }
 
-memsig(model = mxef, man.dig = 6)
+memsig(model = mxef, p.dig = 6)
+
+
+
+
+
+
+
