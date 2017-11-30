@@ -18,10 +18,10 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
-group1 <- as.vector( rnorm(20, mean = 10, sd = 1) )
-group2 <- as.vector( rnorm(20, mean = 5, sd = 1) )
-group3 <- as.vector( rnorm(20, mean = 5, sd = 1) )
-group4 <- as.vector( rnorm(20, mean = 10, sd = 1) )
+group1 <- as.vector( rnorm(20, mean = 8, sd = 1) )
+group2 <- as.vector( rnorm(20, mean = 7.75, sd = 1) )
+group3 <- as.vector( rnorm(20, mean = 7, sd = 1) )
+group4 <- as.vector( rnorm(20, mean = 6, sd = 1) )
 
 # Get all that into a single column
 response <- as.vector(c(group1, group2, group3, group4))
@@ -113,9 +113,13 @@ pairstest <- function(dependent, indep, p.dig, crit.dig){
   
   # END SEQUENTIAL BONFERRONI-SPECIFIC STUFF
   
-  # And just to make it painfully easy, this provides a logical where TRUE means p < alpha (i.e. significant)
-  # and FALSE means p > alpha (i.e. non-significant)
+  # Also, you might want a significance assessment
+  # First, creates a logical vector of T/F on whether the p value is less than the critical point
   results$sig <- with(results, (pvals < alpha))
+  
+  # Second, modifies that answer into "yes" or "no" for significance
+  results$sig <- gsub("TRUE", "Yes!", results$sig); results$sig <- gsub("FALSE", "No", results$sig)
+    ## Buyer beware: this does treat the critical point as a 'cliff' which some people disagree with
   
   # This is cosmetic; the re-ordering step makes the default row numbers non-sequential at this stage
   row.names(results) <- NULL
@@ -131,9 +135,9 @@ plot(response ~ factor, data = working.df)
 
 # NOTE ON FXN MODIFICATION:
 # As a reminder if you modify the function to do some different purpose:
-  ## When we simulated the data there was no difference between group A and group D
-  ## And also no difference between groups B and C
-  ## Therefor, if this function tells you those differences are significant, something has gone horribly wrong
+  ## You chose the criteria for simulating the data!
+  ## Therefor, if this function tells you comparisons are different when you made them not different
+  ## something has gone horribly wrong
 
 # ALTERNATE METHODS:
 # If you would rather do Bonferroni (no sequential adjustment of critical point, so is more conservative)
