@@ -16,7 +16,6 @@
 #install.packages(c("vegan", "geomorph")) # delete the first hashtag and this line will install the packages
 library(vegan) # Need this library for NMS
   ## It's also included within the function, but better safe than sorry
-
 library(geomorph) # Need this library for analysis
 
 # Clear the environment so the function doesn't catch on something strange and user-specific
