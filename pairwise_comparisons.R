@@ -27,10 +27,10 @@ group4 <- as.vector( rnorm(20, mean = 6, sd = 1) )
 response <- as.vector(c(group1, group2, group3, group4))
 
 # Now you want a grouping variable
-factor <- as.vector(c(rep.int("a", (length(response)/4)), 
-                      rep.int("b", (length(response)/4)), 
-                      rep.int("c", (length(response)/4)), 
-                      rep.int("d", (length(response)/4))))
+factor <- as.vector(c(rep.int("Gp1", (length(response)/4)), 
+                      rep.int("Gp2", (length(response)/4)), 
+                      rep.int("Gp3", (length(response)/4)), 
+                      rep.int("Gp4", (length(response)/4))))
 
 # Get all that into a dataframe
 working.df <- as.data.frame(cbind(factor, response))
@@ -132,7 +132,7 @@ pairstest(dependent = working.df$response, indep = working.df$factor, p.dig = 5,
 
 # Plotting can help you better visualize these pairwise differences
 plot(response ~ factor, xaxt = 'n', data = working.df)
-axis(1, at = unique(working.df$factor), labels = parse(text = c("a[a]", "b[b]", "c[c]", "d[d]")), las = 1)
+axis(1, at = unique(working.df$factor), labels = parse(text = c("Gp1[A]", "Gp2[AB]", "Gp3[B]", "Gp4[C]")) )
 
 # NOTE ON FXN MODIFICATION:
 # As a reminder if you modify the function to do some different purpose:
