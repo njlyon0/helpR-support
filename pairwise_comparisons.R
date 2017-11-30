@@ -38,12 +38,8 @@ working.df$response <- as.numeric(as.character(working.df$response))
 
 # To summarize:
   # You have 80 observations of some response
-  # These are grouped into four levels of a treatment "factor"
+  # These are grouped into 20 observations from four levels of a treatment "factor"
     ## either 'a', 'b', 'c', or 'd'
-  # And within each of these four levels you have one of two potential random effects "random"
-    ## either 'X' or 'Y'
-    ## Because this one was added entirely after the fact, it is unlikely to have any effect, but
-      ## don't we frequently hope that our random effect isn't altering our treatment response?
 
 # Check it out!
 str(working.df)
@@ -54,23 +50,23 @@ str(working.df)
 # First you analyze your data to see if your grouping variable is significant
 aov.fit <- aov(response ~ factor, data = working.df)
 summary(aov.fit)
-  ## Quelle surprise, at least one factor is significantly different from the others!
+  ## Quelle surprise: at least one factor is significantly different from the others!
 
 # Now you want to know **which** levels are different from the others!
 
 # PURPOSE:
   ## Conduct multiple pairwise comparisons and adjust for this by modifying the critical point
   ## This differs importantly from the "pairwise.t.test" function in the "stats" package
-  ## As that function modifies the *p value* rather than the *critical point*,
-  ## such that all interpretations can be made at alpha = 0.05
-  ## While convenient, this would lead you to report an incorrect critical point in the body of your results
+    ### As that function modifies the *p value* rather than the *critical point*,
+    ### such that all interpretations can be made at alpha = 0.05
+  ## While convenient, this would lead you to report both an incorrect critical point and p value
 
-# Multiple comparison adjustment methods supported
+# Multiple comparison adjustment methods currently supported
     ## Sequential Bonferroni
-    ## more to come!
+    ## more to come! (hopefully)
 
 # Load the function
-pairstest <- function(dependent, indep, crit.dig, p.dig){
+pairstest <- function(dependent, indep, p.dig, crit.dig){
   ## dependent = response (or "dependent") variable
   ## indep = explanatory (or "independent") variable
   ## crit.dig = digits for critical point reporting
@@ -128,19 +124,26 @@ pairstest <- function(dependent, indep, crit.dig, p.dig){
 }
 
 # Run the pairwise comprison test!
-pairstest(dependent = working.df$response, indep = working.df$factor, crit.dig = 4, p.dig = 5)
+pairstest(dependent = working.df$response, indep = working.df$factor, p.dig = 5, crit.dig = 4)
 
-# If you would rather do Bonferroni (no sequential adjustment of critical point, so is more conservative)
-  # just compare all p values to the lowest critical point, as that is the traditional Bonferroni correction
+# Plotting can help you better visualize these pairwise differences
+plot(response ~ factor, data = working.df)
 
-# Bonferroni correction = 0.05 / number comparisons
-# Sequential Bon = 0.05 / (number comparisons + 1 - rank of comparison i)
-
-# So the first comparison (i.e. of the comparison with rank 1) will yield 0.05 / (X + 1 - 1)
-# Identical to standard Bonferroni (0.05 / X)
-    ## Where "X" is the number of comparisons
-
+# NOTE ON FXN MODIFICATION:
 # As a reminder if you modify the function to do some different purpose:
   ## When we simulated the data there was no difference between group A and group D
   ## And also no difference between groups B and C
   ## Therefor, if this function tells you those differences are significant, something has gone horribly wrong
+
+# ALTERNATE METHODS:
+# If you would rather do Bonferroni (no sequential adjustment of critical point, so is more conservative)
+  ## just compare all p values to the lowest critical point reported by this function.
+  ## That is the traditional Bonferroni correction
+
+# PROOF:
+  ## Bonferroni correction = 0.05 / number comparisons
+  ## Sequential Bon = 0.05 / (number comparisons + 1 - rank of comparison i)
+
+# So the first comparison (i.e. of the comparison with rank 1) will yield 0.05 / (X + 1 - 1)
+# Identical to standard Bonferroni (0.05 / X)
+    ## Where "X" is the number of comparisons
