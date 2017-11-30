@@ -18,6 +18,7 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
+  ## Also, the two letters in the object name after "group" will make sense in a moment
 groupax <- as.vector( rnorm(10, mean = 10, sd = 1) )
 groupbx <- as.vector( rnorm(10, mean = 4, sd = 1) )
 groupcx <- as.vector( rnorm(10, mean = 5, sd = 1) )
