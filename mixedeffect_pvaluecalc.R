@@ -18,17 +18,17 @@ setwd("~/Documents/School/Misc R/Custom Functions")
 
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
-group1a <- as.vector( rnorm(10, mean = 10, sd = 1) )
-group2a <- as.vector( rnorm(10, mean = 4, sd = 1) )
-group3a <- as.vector( rnorm(10, mean = 5, sd = 1) )
-group4a <- as.vector( rnorm(10, mean = 10, sd = 1) )
-group1b <- as.vector( rnorm(10, mean = 10, sd = 3) )
-group2b <- as.vector( rnorm(10, mean = 4, sd = 3) )
-group3b <- as.vector( rnorm(10, mean = 5, sd = 3) )
-group4b <- as.vector( rnorm(10, mean = 10, sd = 3) )
+groupax <- as.vector( rnorm(10, mean = 10, sd = 1) )
+groupbx <- as.vector( rnorm(10, mean = 4, sd = 1) )
+groupcx <- as.vector( rnorm(10, mean = 5, sd = 1) )
+groupdx <- as.vector( rnorm(10, mean = 10, sd = 1) )
+groupay <- as.vector( rnorm(10, mean = 10, sd = 3) )
+groupby <- as.vector( rnorm(10, mean = 4, sd = 3) )
+groupcy <- as.vector( rnorm(10, mean = 5, sd = 3) )
+groupdy <- as.vector( rnorm(10, mean = 10, sd = 3) )
 
 # Get all that into a single column
-response <- as.vector(c(group1a, group1b, group2a, group2b, group3a, group3b, group4a, group4b))
+response <- as.vector(c(groupax, groupay, groupbx, groupby, groupcx, groupcy, groupdx, groupdy))
 
 # Now you want a grouping variable
 factor <- as.vector(c(rep.int("a", (length(response)/4)), 
