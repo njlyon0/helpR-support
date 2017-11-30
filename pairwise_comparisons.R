@@ -131,7 +131,8 @@ pairstest <- function(dependent, indep, p.dig, crit.dig){
 pairstest(dependent = working.df$response, indep = working.df$factor, p.dig = 5, crit.dig = 4)
 
 # Plotting can help you better visualize these pairwise differences
-plot(response ~ factor, data = working.df)
+plot(response ~ factor, xaxt = 'n', data = working.df)
+axis(1, at = unique(working.df$factor), labels = parse(text = c("a[a]", "b[b]", "c[c]", "d[d]")), las = 1)
 
 # NOTE ON FXN MODIFICATION:
 # As a reminder if you modify the function to do some different purpose:
@@ -144,7 +145,7 @@ plot(response ~ factor, data = working.df)
   ## just compare all p values to the lowest critical point reported by this function.
   ## That is the traditional Bonferroni correction
 
-# PROOF:
+# PROOF (of above statement):
   ## Bonferroni correction = 0.05 / number comparisons
   ## Sequential Bon = 0.05 / (number comparisons + 1 - rank of comparison i)
 
