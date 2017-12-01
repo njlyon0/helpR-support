@@ -47,8 +47,7 @@ ran <- c(rep.int("X", 10), rep.int("Y", 10))
 random <- as.vector(rep(ran, (length(response)/4) ))
 
 # Get all that into a dataframe
-working.df <- as.data.frame(cbind(factor, random, response))
-working.df$response <- as.numeric(as.character(working.df$response))
+working.df <- data.frame(factor = factor, random = random, response = response)
 
 # To summarize:
 # You have 80 observations of some response
