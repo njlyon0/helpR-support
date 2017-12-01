@@ -75,7 +75,7 @@ summary(mxef)
     ### Hence the name "memsig" (mixed-effect model = MEM + significance)
 
 # Load the function
-memsig <- function(model, p.dig){
+memsig <- function(model, p.dig = 4){
   ## model = object of mixed-effect model fitted by lme4::lmer
   ## p.dig = manual setting of the number of digits for p value reporting
   
