@@ -2,7 +2,7 @@
                   # Pairwise Comparisons with Critical Point Adjustment
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nicholas J Lyon
-  ## Updated Nov. 21, 2017
+  ## Updated Nov. 30, 2017
 
 # clear environment and set working directory
 rm(list = ls())

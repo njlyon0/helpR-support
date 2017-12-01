@@ -2,7 +2,7 @@
                                   # How to Function
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nick J Lyon
-  ## Updated Nov. 29, 2017
+  ## Updated Nov. 30, 2017
 
 # SO:
 # You've moved enough of your data management process into R that efficiency is now a consideration

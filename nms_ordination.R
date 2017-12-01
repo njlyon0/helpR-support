@@ -2,15 +2,12 @@
             # Non-metric Multidimensional Scaling (NMS) Ordination Function
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nick Lyon
-    ## refer questions to njlyon@iastate.edu if insoluble problems arise
+  ## Updated Nov. 30, 2017
 
 # This function performs a non-metric multidimensional scaling (NMS) ordination for you
 
 # Colors are colorblind safe and found here:
   # http://colorbrewer2.org/#type=sequential&scheme=GnBu&n=4
-
-# Code written by Nick Lyon
-  ## Updated 11/13/17
 
 # Required libraries
 #install.packages(c("vegan", "geomorph")) # delete the first hashtag and this line will install the packages

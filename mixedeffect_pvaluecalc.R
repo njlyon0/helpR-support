@@ -2,7 +2,7 @@
                       # Mixed-Effect Model P Value Determination
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nicholas J Lyon
-  ## Updated Nov. 21, 2017
+  ## Updated Nov. 30, 2017
 
 # Be sure that you have the two necessary libraries installed
 #install.packages(c("lme4", "pbkrtest"))
