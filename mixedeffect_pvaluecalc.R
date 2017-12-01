@@ -4,6 +4,11 @@
 # Code written by Nicholas J Lyon
   ## Updated Nov. 21, 2017
 
+# Be sure that you have the two necessary libraries installed
+#install.packages(c("lme4", "pbkrtest"))
+# and load them
+library(lme4); library(pbkrtest)
+
 # Clear environment and set working directory
 rm(list = ls())
 setwd("~/Documents/School/Misc R/Custom Functions")
@@ -58,9 +63,6 @@ str(working.df)
 ##  -------------------------------------  ##
    # Mixed-Effect Model Fitting
 ##  -------------------------------------  ##
-# Need this library to fit a mixed-effect model
-library(lme4)
-
 # Fit a mixed-effect model
 mxef <- lmer(response ~ factor +(1|random), data = working.df)
 summary(mxef)
