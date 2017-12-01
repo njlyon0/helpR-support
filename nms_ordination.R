@@ -66,7 +66,9 @@ mds$stress
   ## Similar to F statistics or p values
 
 # Actual function (only works for four groups, but that is easily modified by you)
-nms.ord <- function(mod, groupcol, g1, g2, g3, g4, lntp1, lntp2, lntp3, lntp4, legcont, legpos) {
+nms.ord <- function(mod, groupcol, g1, g2, g3, g4, 
+                    lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 1,
+                    legcont, legpos = "topright") {
   ## mod = object returned by metaMDS
   ## groupcol = group column in the dataframe that contains those (not the community matrix)
   ## g1 - g4 = how each group appears in your dataframe (in quotes)
