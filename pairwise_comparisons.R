@@ -33,8 +33,7 @@ factor <- as.vector(c(rep.int("Gp1", (length(response)/4)),
                       rep.int("Gp4", (length(response)/4))))
 
 # Get all that into a dataframe
-working.df <- as.data.frame(cbind(factor, response))
-working.df$response <- as.numeric(as.character(working.df$response))
+working.df <- data.frame(factor = factor, response = response)
 
 # To summarize:
   # You have 80 observations of some response
