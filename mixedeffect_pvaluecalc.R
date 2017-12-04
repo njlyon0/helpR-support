@@ -18,8 +18,26 @@ setwd("~/Documents/School/Misc R/Custom Functions")
       # Dummy Data Creation
 ##  -------------------------------------  ##
 # Want to simulate data so that you have sufficient replicates
-  ## While it doesn't really matter if the pairwise comparisons are significant,
-  ## you don't want the function's efficacy to be confounded by low statistical power
+  ## While it doesn't really matter if anything is actually significant
+  ## you don't want the function's efficacy to be confounded by low statistical power/no group differences
+
+# Choose the mean values for 8 groups and their variances
+means <- rep(c(10, 4, 5, 10, 10, 4, 5 ,10), rep(10, 8))
+sds <- rep(c(1, 1, 1, 1, 3, 3, 3, 3), rep(10, 8))
+
+# Once you have both you can easily generate a single object to hold all those different groups
+response <- rnorm(80, means, sds)
+
+# Now you want to add your grouping variable (group means vary by this value)
+factor <- rep(c('a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'),  rep(10, 8))
+
+# And your random effect (wherer group 2 has much greater variance than group 1)
+random <- rep(c('1', '1', '1', '1', '2', '2', '2', '2'),  rep(10, 8))
+
+# Now make a dataframe to test the mixed effect function on
+working.df <- data.frame(factor, random, response)
+str(working.df)  # always good to check to see if you got what you thought you'd get
+
 
 # Simulate data that are normally distributed and have different means/variances
   ## Increase the odds of at least one compairson being signficant
