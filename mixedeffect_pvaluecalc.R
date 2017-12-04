@@ -42,9 +42,9 @@ str(working.df)  # always good to check to see if you got what you thought you'd
    # Mixed-Effect Model Fitting
 ##  -------------------------------------  ##
 # Fit a mixed-effect model
-mxef <- lmer(response ~ factor +(1|random), data = working.df)
+mxef <- lme4::lmer(response ~ factor +(1|random), data = working.df)
 summary(mxef)
-  ## You get some summar statistics but no p values!
+  ## You get some summary statistics but no p values!
 
 # PURPOSE:
   ## A critique I have heard of mixed-effect models is the lack of an easy 'here is the p value'-style output
@@ -54,16 +54,26 @@ summary(mxef)
     ### Hence the name "memsig" (mixed-effect model = MEM + significance)
 
 # Load the function
-memsig <- function(model, p.dig = 4){
+memsig <- function(model, df.dig = 4, p.dig = 4){
   ## model = object of mixed-effect model fitted by lme4::lmer
+  ## df.dig = manual setting of the number of digits for degrees of freedom
   ## p.dig = manual setting of the number of digits for p value reporting
   
   # Load in the table of summary results that comes with the model
   summary <- data.frame(coef(summary(model)))
   
-  # For Kenward-Roger approximation of degrees of freedom
+  # For Kenward-Roger approximation of degrees of freedom from each factor level
   require(pbkrtest)
-  summary$df <- as.numeric(get_ddf_Lb(model, fixef(model)))
+  df1 <- get_ddf_Lb(model, c(1,0,0,0))  # to test 1 * intercept = 0
+  df2 <- get_ddf_Lb(model, c(0,1,0,0))  # to test 1 * factorb = 0
+  df3 <- get_ddf_Lb(model, c(0,0,1,0))  # to test 1 * factorc = 0
+  df4 <- get_ddf_Lb(model, c(0,0,0,1))  # to test 1 * factord = 0
+  
+  # Get a single vector and round them to be more intelligible
+  dfs <- as.vector(c(df1, df2, df3, df4))
+  
+  # Get them into a column as part of your summary table
+  summary$df <- round(dfs, digits = df.dig)
   
   # Calculate p value from degrees of freedom and t statistic
   pvalues <- 2 * (1 - stats::pt(abs(summary$t.value), summary$df))
@@ -77,9 +87,12 @@ memsig <- function(model, p.dig = 4){
 
 memsig(model = mxef, p.dig = 6)
 
+# Alternately, there is an upgrade to the lmer function in the "lmerTest" package that does this by default
+mxef2 <- lmerTest::lmer(response ~ factor +(1|random), data = working.df)
+coef(summary(mxef2))
 
-
-
-
+# So no real need for my custom function, though it does (hopefully) aid in understanding how p values
+  ## are calculated for mixed effects models.
+  ## Cheers!
 
 
