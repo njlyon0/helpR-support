@@ -38,45 +38,6 @@ random <- rep(c('1', '1', '1', '1', '2', '2', '2', '2'),  rep(10, 8))
 working.df <- data.frame(factor, random, response)
 str(working.df)  # always good to check to see if you got what you thought you'd get
 
-
-# Simulate data that are normally distributed and have different means/variances
-  ## Increase the odds of at least one compairson being signficant
-  ## Also, the two letters in the object name after "group" will make sense in a moment
-groupax <- as.vector( rnorm(10, mean = 10, sd = 1) )
-groupbx <- as.vector( rnorm(10, mean = 4, sd = 1) )
-groupcx <- as.vector( rnorm(10, mean = 5, sd = 1) )
-groupdx <- as.vector( rnorm(10, mean = 10, sd = 1) )
-groupay <- as.vector( rnorm(10, mean = 10, sd = 3) )
-groupby <- as.vector( rnorm(10, mean = 4, sd = 3) )
-groupcy <- as.vector( rnorm(10, mean = 5, sd = 3) )
-groupdy <- as.vector( rnorm(10, mean = 10, sd = 3) )
-
-# Get all that into a single column
-response <- as.vector(c(groupax, groupay, groupbx, groupby, groupcx, groupcy, groupdx, groupdy))
-
-# Now you want a grouping variable
-factor <- as.vector(c(rep.int("a", (length(response)/4)), 
-                      rep.int("b", (length(response)/4)), 
-                      rep.int("c", (length(response)/4)), 
-                      rep.int("d", (length(response)/4))))
-
-# And it might be valuable to have another factor variable to use as a random effect
-ran <- c(rep.int("X", 10), rep.int("Y", 10))
-random <- as.vector(rep(ran, (length(response)/4) ))
-
-# Get all that into a dataframe
-working.df <- data.frame(factor = factor, random = random, response = response)
-
-# To summarize:
-# You have 80 observations of some response
-# These are grouped into four levels of a treatment "factor"
-  ## either 'a', 'b', 'c', or 'd'
-# And within each of these four levels you have one of two potential random effects "random"
-  ## either 'X' or 'Y' where Y has a much greater variance (but the same mean as X for the same factor level)
-
-# Check for yourself!
-str(working.df)
-
 ##  -------------------------------------  ##
    # Mixed-Effect Model Fitting
 ##  -------------------------------------  ##
