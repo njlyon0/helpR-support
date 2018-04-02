@@ -2,7 +2,7 @@
             # Non-metric Multidimensional Scaling (NMS) Ordination Function
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nick Lyon
-  ## Updated Nov. 30, 2017
+  ## Updated 2018, April 2
 
 # This function performs a non-metric multidimensional scaling (NMS) ordination for you
 
@@ -14,6 +14,8 @@
 library(vegan) # Need this library for NMS
   ## It's also included within the function, but better safe than sorry
 library(geomorph) # Need this library for analysis
+
+# START ####
 
 # Clear the environment so the function doesn't catch on something strange and user-specific
 rm(list = ls())
@@ -35,12 +37,12 @@ factor <- as.vector(c(rep.int("Trt1", (nrow(resp)/4)),
                       rep.int("Trt4", (nrow(resp)/4))) )
 ref <- cbind(factor, as.data.frame(resp))
 
+# Analysis #### 
+
 # ANALYSIS NOTE:
   ## While NMS can be useful in visualizing multivariate differences, it is NOT an analytical tool!
   ## Use of an actual multivariate analytical test is necessary if differences among groups are of interest
   ## Feel free to skip through this section if you don't need/want help with multivariate analysis
-
-# STEPS NECESSARY FOR MULTIVARIATE ANALYSIS
 
 # Initial perMANOVA
 procD.lm(resp ~ factor, data = ref)
@@ -55,7 +57,7 @@ advanced.procD.lm(resp ~ factor, ~ 1, ~ factor, data = ref)
 # Trt1 = A | Trt2 = A | Trt3 = A | Trt4 = B
   # Only treatment 4 was different from all others
 
-# STEPS ACTUALLY REQUIRED FOR NMS ORDINATION
+# NMS ####
 
 # Run the model
 mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
@@ -64,6 +66,7 @@ mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
 mds$stress
   ##  "Stress" is typically reported parenthetically for NMS ordinations,
   ## Similar to F statistics or p values
+  ## Clarke et al 1993 suggests stress ≤ 0.15 to be a good threshold/rule of thumb
 
 # Actual function (only works for four groups, but that is easily modified by you)
 nms.ord <- function(mod, groupcol, g1, g2, g3, g4, 
@@ -126,4 +129,4 @@ nms.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 1, 1, 1, 5, c("1", "2",
 dev.off() # for saving
 
 
-
+# END ####

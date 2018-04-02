@@ -10,7 +10,7 @@ setwd("~/Documents/School/Misc R/Custom Functions")
   ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
 
 ##  -------------------------------------  ##
-      # Dummy Data Creation
+      # Dummy Data Creation ####
 ##  -------------------------------------  ##
 # Want to simulate data so that you have sufficient replicates
   ## While it doesn't really matter if the pairwise comparisons are significant,
@@ -44,7 +44,7 @@ working.df <- data.frame(factor = factor, response = response)
 str(working.df)
 
 ##  -------------------------------------  ##
-      # Pairwise Comparisons
+      # Pairwise Comparisons ####
 ##  -------------------------------------  ##
 # First you analyze your data to see if your grouping variable is significant
 aov.fit <- aov(response ~ factor, data = working.df)
@@ -133,6 +133,8 @@ pairstest(dependent = working.df$response, indep = working.df$factor, p.dig = 5,
 plot(response ~ factor, xaxt = 'n', data = working.df)
 axis(1, at = unique(working.df$factor), labels = parse(text = c("Gp1[A]", "Gp2[AB]", "Gp3[B]", "Gp4[C]")) )
 
+# Misc Notes ####
+
 # NOTE ON FXN MODIFICATION:
 # As a reminder if you modify the function to do some different purpose:
   ## You chose the criteria for simulating the data!
@@ -151,3 +153,5 @@ axis(1, at = unique(working.df$factor), labels = parse(text = c("Gp1[A]", "Gp2[A
 # So the first comparison (i.e. of the comparison with rank 1) will yield 0.05 / (X + 1 - 1)
 # Identical to standard Bonferroni (0.05 / X)
     ## Where "X" is the number of comparisons
+
+
