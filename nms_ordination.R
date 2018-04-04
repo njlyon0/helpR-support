@@ -107,6 +107,8 @@ nms.ord <- function(mod, groupcol, g1, g2, g3, g4,
   
   # Add legend
   legend(legpos, legend = legcont, bty = "n", 
+         title = paste0("Stress = ", round(mod$stress, digits = 3)),
+          ## The "title" of the legend will now be the stress of the NMS
          pch = c(21, 22, 23, 24), cex = 1.15, 
          pt.bg = c(col1, col2, col3, col4))
   
