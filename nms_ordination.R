@@ -2,7 +2,7 @@
             # Non-metric Multidimensional Scaling (NMS) Ordination Function
 ##  ----------------------------------------------------------------------------------------------------------  ##
 # Code written by Nick Lyon
-  ## Updated 2019, October 7
+  ## Updated 2020, 14 January
 
 # This function performs a non-metric multidimensional scaling (NMS) ordination for you
 
@@ -24,6 +24,9 @@ rm(list = ls())
 setwd("~/Documents/School/'Misc R/Custom Functions")
   ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
 
+## --------------------------------------  ##
+              # Data Prep ####
+## --------------------------------------  ##
 # Let's use some of the data from the vegan package to demonstrate the function
 data("varespec")
 resp <- varespec
@@ -37,10 +40,11 @@ factor <- as.vector(c(rep.int("Trt1", (nrow(resp)/4)),
                       rep.int("Trt4", (nrow(resp)/4))) )
 ref <- cbind(factor, as.data.frame(resp))
 
-# Analysis #### 
-
+## --------------------------------------  ##
+       # Null Hypothesis Testing ####
+## --------------------------------------  ##
 # ANALYSIS NOTE:
-  ## While NMS can be useful in visualizing multivariate differences, it is NOT an analytical tool!
+  ## While NMS can be useful in visualizing multivariate differences, it is NOT a hypothesis test!
   ## Use of an actual multivariate analytical test is necessary if differences among groups are of interest
   ## Feel free to skip through this section if you don't need/want help with multivariate analysis
 
@@ -52,9 +56,10 @@ anova(lm.rrpp(resp ~ factor, data = ref), effect.type = "F")
 # In reality would need to track down which groups are different from which (pairwise comparisons)
   ## but we'll leave that alone here
 
-# NMS ####
-
-# Run the model
+## --------------------------------------  ##
+                  # NMS ####
+## --------------------------------------  ##
+# Actually do the non-metric multidimensional scaling
 mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
   ## Where "resp" is the matrix of your community data (without grouping variables)
 
@@ -63,8 +68,9 @@ mds$stress
   ## Similar to F statistics or p values
   ## Clarke et al 1993 suggests stress ≤ 0.15 to be a good threshold/rule of thumb
 
-# 4 groups ####
-
+## --------------------------------------  ##
+          # 4-Group Ordination ####
+## --------------------------------------  ##
 # Actual function (only works for four groups, but that is easily modified by you)
 nms.4.ord <- function(mod, groupcol, g1, g2, g3, g4, 
                     lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 1,
@@ -121,14 +127,15 @@ nms.4.ord(mds, # object returned by metaMDS
         "bottomright") # legend position shorthand
 
 # Saving procedure
-jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd.jpg") # for saving
+jpeg(file = "./Test Plots/NMS_DummyOrd.jpg") # for saving
 
 nms.4.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 1, 1, 1, 5, c("1", "2", "3", "4"), "bottomright")
 
 dev.off() # for saving
 
-# 3 groups ####
-
+## --------------------------------------  ##
+# 3-Group Ordination ####
+## --------------------------------------  ##
 # Let's ditch one of the groups to trial this with one fewer ellipse
 ref2 <- subset(ref, ref$factor != "Trt3")
 ref2$factor <- as.factor(as.character(ref2$factor))
@@ -186,8 +193,11 @@ nms.3.ord <- function(mod, groupcol, g1, g2, g3,
 nms.3.ord(mds2, ref2$factor, g1 = "Trt1", g2 = "Trt2", g3 = "Trt4", lntp1 = 1, lntp2 = 1, lntp3 = 5,
           legcont = c("1", "2", "3"), "bottomleft")
 
-# 6 groups?!? ####
-  # MaDnEsS!.!
+## --------------------------------------  ##
+      # 6-Group Ordination (?!?) ####
+## --------------------------------------  ##
+# MaDnEsS!.!
+
 # Get a new factor group that has six levels and mush it into the data
 factor2 <- as.vector(c(rep.int("Trt1", (nrow(resp)/6)),
                       rep.int("Trt2", (nrow(resp)/6)),
@@ -263,7 +273,7 @@ nms.6.ord(mds, ref3$factor,
 
 # To save it do this: 
   ## Select from here: 
-jpeg(file = "./Custom Fxn Test Plots/NMS_DummyOrd2.jpg")
+jpeg(file = "./Test Plots/NMS_DummyOrd2.jpg")
 nms.6.ord(mds, ref3$factor, g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4", g5 = "Trt5", g6 = "Trt6",
           lntp1 = 1, lntp2 = 1, lntp3 = 5, lntp4 = 3, lntp5 = 1, lntp6 = 2,
           legcont = c("1", "2", "3", "4", "5", "6"), "topright")
