@@ -20,9 +20,9 @@ library(RRPP) # Need this library for analysis
 # Clear the environment so the function doesn't catch on something strange and user-specific
 rm(list = ls())
 
-# Also, set your working directory to the location where your project is (and delete my WD code here)
-setwd("~/Documents/School/'Misc R/Custom Functions")
-  ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
+# Also, set your working directory to the project folder
+myWD <- getwd()
+myWD
 
 ## --------------------------------------  ##
               # Data Prep ####

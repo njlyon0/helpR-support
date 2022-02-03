@@ -12,9 +12,9 @@
 # Clear the environment so the function doesn't catch on something strange and user-specific
 rm(list = ls())
 
-# Also, set your working directory to the location where your project is (and delete my WD code here)
-setwd("~/Documents/School/'Misc R/Custom Functions")
-  ## "Session" menu at top of screen -> "Set Working Directory" -> "To Project Directory"
+# Also, set your working directory to the project folder
+myWD <- getwd()
+myWD
 
 # Required libraries
 library(RRPP) # Need this library for null hypothesis testing (pre-ordination)
@@ -90,8 +90,8 @@ pcoa.4.ord <- function(mod, groupcol, g1, g2, g3, g4,
   
   # Create plot
   plot(mod$vectors, display = 'sites', choice = c(1, 2), type = 'none',
-       xlab = paste0("PC1 (", round(pnts$values$Relative_eig[1] * 100, digits = 2), "%)"),
-       ylab = paste0("PC2 (", round(pnts$values$Relative_eig[2] * 100, digits = 2), "%)"))
+       xlab = paste0("PC1 (", round(mod$values$Relative_eig[1] * 100, digits = 2), "%)"),
+       ylab = paste0("PC2 (", round(mod$values$Relative_eig[2] * 100, digits = 2), "%)"))
     ## Probably want the relative eigenvalues (% variation explained per axis) on the plot in an obvious way
   
   # Set colors (easier for you to modify if we set this now and call these objects later)
@@ -168,8 +168,8 @@ pcoa.3.ord <- function(mod, groupcol, g1, g2, g3,
   
   # Create plot
   plot(mod$vectors, display = 'sites', choice = c(1, 2), type = 'none',
-       xlab = paste0("PC1 (", round(pnts$values$Relative_eig[1] * 100, digits = 2), "%)"),
-       ylab = paste0("PC2 (", round(pnts$values$Relative_eig[2] * 100, digits = 2), "%)"))
+       xlab = paste0("PC1 (", round(mod$values$Relative_eig[1] * 100, digits = 2), "%)"),
+       ylab = paste0("PC2 (", round(mod$values$Relative_eig[2] * 100, digits = 2), "%)"))
   ## Probably want the relative eigenvalues (% variation explained per axis) on the plot in an obvious way
   
   # Set colors (easier for you to modify if we set this now and call these objects later)
