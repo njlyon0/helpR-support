@@ -1,8 +1,9 @@
-##  ----------------------------------------------------------------------------------------------------------  ##
-            # Non-metric Multidimensional Scaling (NMS) Ordination Function
-##  ----------------------------------------------------------------------------------------------------------  ##
-# Code written by Nick Lyon
+##  --------------------------------------------------------------------  ##
+      # Non-metric Multidimensional Scaling (NMS) Ordination Function
+##  --------------------------------------------------------------------  ##
+# Code written by Nick J Lyon
   ## Updated 2020, 14 January
+  ## Updated 2022, 8 March
 
 # This function performs a non-metric multidimensional scaling (NMS) ordination for you
 
@@ -38,6 +39,12 @@ factor <- as.vector(c(rep.int("Trt1", (nrow(resp)/4)),
                       rep.int("Trt2", (nrow(resp)/4)),
                       rep.int("Trt3", (nrow(resp)/4)),
                       rep.int("Trt4", (nrow(resp)/4))) )
+
+# Make this into a 'rrpp.data.frame' as is now required by RRPP
+ref.rdf <- rrpp.data.frame("factor" = factor, "resp" = as.matrix(resp))
+str(ref.rdf)
+
+# Make a simpler dataframe too
 ref <- cbind(factor, as.data.frame(resp))
 
 ## --------------------------------------  ##
@@ -49,7 +56,7 @@ ref <- cbind(factor, as.data.frame(resp))
   ## Feel free to skip through this section if you don't need/want help with multivariate analysis
 
 # Initial perMANOVA
-anova(lm.rrpp(resp ~ factor, data = ref), effect.type = "F")
+anova(RRPP::lm.rrpp(resp ~ factor, data = ref.rdf), effect.type = "F")
   ## Interpretation: at least one group is significantly different from the others
   ## Yes these groups don't mean anything, but it's still illustrative.
 
@@ -61,12 +68,13 @@ anova(lm.rrpp(resp ~ factor, data = ref), effect.type = "F")
 ## --------------------------------------  ##
 # Actually do the non-metric multidimensional scaling
 mds <- metaMDS(resp, autotransform = F, expand = F, k = 2, try = 100)
-  ## Where "resp" is the matrix of your community data (without grouping variables)
+## Where "resp" is the matrix of your community data (without grouping variables)
 
 mds$stress
-  ##  "Stress" is typically reported parenthetically for NMS ordinations,
-  ## Similar to F statistics or p values
-  ## Clarke et al 1993 suggests stress ≤ 0.15 to be a good threshold/rule of thumb
+##  "Stress" is typically reported parenthetically for NMS ordinations,
+## Similar to F statistics or p values
+## Clarke et al. 1993 suggests stress ≤ 0.15 to be a good rule of thumb
+### http://dx.doi.org/10.1111/j.1442-9993.1993.tb00438.x
 
 ## --------------------------------------  ##
           # 4-Group Ordination ####
@@ -120,11 +128,15 @@ nms.4.ord <- function(mod, groupcol, g1, g2, g3, g4,
 # Example syntax
 nms.4.ord(mds, # object returned by metaMDS
         ref$factor, # grouping column of the dataframe
-        g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4", # entries for groups 1 through 4
-        lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5, # manual settings for ellipse line types
-        legcont = c("1", "2", "3", "4"), # entry for legcont (must be single object, hence the "c(...)")
-## This is separate (rather than concatenating g1-4 in the function) to allow you to change spelling/casing
-        "bottomright") # legend position shorthand
+        g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4",
+        # (^) entries for groups 1 through 4
+        lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 5,
+        # (^) manual settings for ellipse line types
+        legcont = c("1", "2", "3", "4"),
+        # (^) entry for legend (must be concatenated)
+## This is separate (rather than concatenating g1-4 in the function) to allow you to change specific phrasing
+        "bottomright")
+# (^) legend position shorthand
 
 # Saving procedure
 jpeg(file = "./Test Plots/NMS_DummyOrd.jpg") # for saving
@@ -134,7 +146,7 @@ nms.4.ord(mds, ref$factor, "Trt1", "Trt2", "Trt3", "Trt4", 1, 1, 1, 5, c("1", "2
 dev.off() # for saving
 
 ## --------------------------------------  ##
-# 3-Group Ordination ####
+          # 3-Group Ordination ####
 ## --------------------------------------  ##
 # Let's ditch one of the groups to trial this with one fewer ellipse
 ref2 <- subset(ref, ref$factor != "Trt3")
