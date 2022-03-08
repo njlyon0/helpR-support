@@ -300,69 +300,6 @@ dev.off()
 # The ideal is obviously to have the function automatically detect group number and move accordingly
 
 
-nms.6.ord <- function(mod, groupcol, g1, g2, g3, g4, g5, g6,
-                      lntp1 = 1, lntp2 = 1, lntp3 = 1, lntp4 = 1, lntp5 = 1, lntp6 = 1, 
-                      legcont, legpos = "topright") {
-  ## mod = object returned by metaMDS
-  ## groupcol = group column in the dataframe that contains those (not the community matrix)
-  ## g1 - g6 = how each group appears in your dataframe (in quotes)
-  ## lntp1 - 6 = what sort of line each ellipse will be made of (accepts integers between 1 and 6 for diff lines)
-  ## legcont = single object for what you want the content of the legend to be
-  ## legpos = legend position, either numeric vector of x/y coords or shorthand accepted by "legend" function
-  
-  # Create plot
-  plot(mod, display = 'sites', choice = c(1, 2), type = 'none', xlab = "", ylab = "")
-  
-  # Set the colors here (makes the function itself a little simpler and these colors are OK)
-  col1 <- "#fee090" # yellow
-  col2 <- "#d73027" # red
-  col3 <- "#abd9e9" # light blue
-  col4 <- "#4575b4" # dark blue
-  col5 <- "#000000" # black
-  col6 <- "#bdbdbd" # med. gray
-  
-  # Add points for each group with a different color per group
-  points(mod$points[groupcol == g1, 1], mod$points[groupcol == g1, 2], pch = 21, bg = col1)
-  points(mod$points[groupcol == g2, 1], mod$points[groupcol == g2, 2], pch = 22, bg = col2)
-  points(mod$points[groupcol == g3, 1], mod$points[groupcol == g3, 2], pch = 23, bg = col3)
-  points(mod$points[groupcol == g4, 1], mod$points[groupcol == g4, 2], pch = 24, bg = col4)
-  points(mod$points[groupcol == g5, 1], mod$points[groupcol == g5, 2], pch = 25, bg = col5)
-  points(mod$points[groupcol == g6, 1], mod$points[groupcol == g6, 2], pch = 21, bg = col6)
-  ## As of right now the colors are colorblind safe and each group is also given its own shape*
-  ## *The circle is reused twice (group1 and 6, because there aren't enough hollow shapes)
-  
-  # Get a single vector of your manually set line types for the ellipses
-  lntps <- c(lntp1, lntp2, lntp3, lntp4, lntp5, lntp6)
-  
-  # Ordinate SD ellipses around the centroid
-  library(vegan) # need this package for the following function
-  ordiellipse(mod, groupcol, 
-              col = c(g1 = col1, g2 = col2, g3 = col3, g4 = col4, g5 = col5, g6 = col6),
-              display = "sites", kind = "sd", lwd = 2, lty = lntps, label = F)
-  
-  # Add legend
-  legend(legpos, legend = legcont, bty = "n", 
-         title = paste0("Stress = ", round(mod$stress, digits = 3)),
-         ## The "title" of the legend will now be the stress of the NMS
-         pch = c(21, 22, 23, 24, 25, 21), cex = 1.15, 
-         pt.bg = c(col1, col2, col3, col4, col5, col6))
-  
-}
-
-# Make the NMS
-g1 <- "Trt1"
-g2 <- "Trt2"
-g3 <- "Trt3"
-g4 <- "Trt4"
-g5 <- "Trt5"
-g6 <- "Trt6"
-lntp1 <- 1
-lntp2 <- 1
-lntp3 <- 5
-lntp4 <- 3
-lntp5 <- 1
-lntp6 <- 2
-
 
 mod <- mds2
 groupcol <- as.character(ref2$factor)
