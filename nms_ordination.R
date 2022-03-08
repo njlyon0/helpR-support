@@ -177,6 +177,9 @@ nms_ord(mod = mds, groupcol = data$factor_4lvl, title = '4-Level NMS',
 # And use it for 6 (dropping title and some argument names)
 nms_ord(mds, data$factor_6lvl, leg_pos = 'topright')
 
+# Look what happens if you go over the supported number of groups:
+nms_ord(mds, data$factor_over)
+
 # Save two of them
 ## 4-level
 jpeg(file = "./Test Plots/NMS_DummyOrd.jpg")

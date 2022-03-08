@@ -187,6 +187,9 @@ pcoa_ord(pnts, data$factor_4lvl)
 pcoa_ord(pnts, data$factor_6lvl, leg_pos = 'topleft',
          leg_cont = c('1', '2', 'Group 3', '4', '5', '6'))
 
+# Look what happens if you go over the supported number of groups:
+pcoa_ord(pnts, data$factor_over)
+
 # Save some of these
 ## 4
 jpeg(file = "./Test Plots/PCoA_DummyOrd.jpg")
