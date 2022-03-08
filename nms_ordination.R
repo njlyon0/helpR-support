@@ -364,12 +364,11 @@ lntp5 <- 1
 lntp6 <- 2
 
 
-mod <- mds
-groupcol <- ref3$factor
+mod <- mds2
+groupcol <- as.character(ref2$factor)
 
 # Make vector of colors
-colors <- c(col1 = "#fee090",  col2 = "#d73027", col3 = "#abd9e9",
-          col4 = "#4575b4", col5 = "#000000", col6 = "#bdbdbd")
+colors <- c("#fee090", "#d73027", "#abd9e9", "#4575b4", "#000000", "#bdbdbd")
 # Make vector of shapes
 shapes <- c(21, 22, 23, 24, 25, 21, 22, 23, 24, 25)
 # Make a vector linetypes
@@ -378,8 +377,12 @@ groups <- as.vector(unique(groupcol))
 names(colors) <- groups
 names(shapes) <- groups
 names(lines) <- groups
-legcont <- c("1", "2", "3", "4", "5", "6")
+legcont <- unique(groupcol)
 legpos <- "topright"
+
+colors <- colors[!is.na(names(colors))]
+shapes <- shapes[!is.na(names(shapes))]
+lines <- lines[!is.na(names(lines))]
 
 # Create blank plot
 plot(mod, display = 'sites', choice = c(1, 2), type = 'none', xlab = "", ylab = "")
