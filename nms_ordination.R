@@ -10,8 +10,6 @@
 # Required libraries
 library(vegan); library(RRPP); library(tidyverse)
 
-# START ####
-
 # Clear the environment
 rm(list = ls())
 
