@@ -2,13 +2,13 @@
       # Non-metric Multidimensional Scaling (NMS) Ordination Function
 ##  --------------------------------------------------------------------  ##
 # Code written by Nick J Lyon
-  ## Updated 2020, 14 January
   ## Updated 2022, 8 March
 
-# This function performs a non-metric multidimensional scaling (NMS) ordination for you
+# Purpose:
+## Create publication-quality non-metric multidimensional scaling ordinations
 
 # Colors are colorblind safe and found here:
-  # http://colorbrewer2.org/#type=sequential&scheme=GnBu&n=4
+# http://colorbrewer2.org/#type=sequential&scheme=GnBu&n=4
 
 # Required libraries
 #install.packages(c("vegan", "geomorph")) # delete the first hashtag and this line will install the packages
@@ -284,13 +284,13 @@ nms.6.ord(mds, ref3$factor,
   ## and it'll look nice in your graphs folder; I promise!
 
 # To save it do this: 
-  ## Select from here: 
+  ## Select from here...
 jpeg(file = "./Test Plots/NMS_DummyOrd2.jpg")
 nms.6.ord(mds, ref3$factor, g1 = "Trt1", g2 = "Trt2", g3 = "Trt3", g4 = "Trt4", g5 = "Trt5", g6 = "Trt6",
           lntp1 = 1, lntp2 = 1, lntp3 = 5, lntp4 = 3, lntp5 = 1, lntp6 = 2,
           legcont = c("1", "2", "3", "4", "5", "6"), "topright")
 dev.off()
-  ## to here. Then run it
+  ## ...to here. Then run it
 
 
 
