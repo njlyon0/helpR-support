@@ -81,7 +81,7 @@ unique(fish2$count_num)
 # See the evolution of the 'count' column here
 str(fish2)
 fish2
-
+ 
 # This is a shorter one than the others but my need for this function is simple
 # Hope it helps!
 
