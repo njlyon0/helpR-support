@@ -7,10 +7,6 @@
 # Clear environment
 rm(list = ls())
 
-# Set working directory to project directory
-myWD <- getwd()
-myWD
-
 ## --------------------------------------  ##
               # Data Prep ####
 ## --------------------------------------  ##
@@ -44,7 +40,7 @@ unique(fish$count)
           # Numeric Check Function
 ## --------------------------------------  ##
 # Load the function
-num.chk <- function(dat, col) {
+num_chk <- function(dat, col) {
   ## dat = a dataframe
   ## col = the name of the column you want to check for issues (in quotes!)
   
@@ -61,29 +57,30 @@ num.chk <- function(dat, col) {
 }
 
 # Now we can use it
-num.chk(dat = fish, col = 'count')
+num_chk(dat = fish, col = 'count')
 # Only entries that would be coerced to NA are returned
 
 # You can then use whichever flavor of typo fix you want to resolve this
 fish2 <- fish
-fish2$count.fix <- gsub("\\_23", "23", fish2$count)
+fish2$count_fix <- gsub("\\_23", "23", fish2$count)
 
 # Then re-run the custom function to ensure the error is fixed
-num.chk(dat = fish2, col = 'count.fix')
+num_chk(dat = fish2, col = 'count_fix')
 # "character(0)" means that there are no values that would be coerced to NA
 
 # Note that the function won't identify non-numbers that R can guess
-unique(fish2$count.fix)
+unique(fish2$count_fix)
   ## see the " 14" with a space to the left of the number
 
 # But this is a non-issue because when you coerce the column to numeric
-fish2$count.num <- as.numeric(fish2$count.fix)
+fish2$count_num <- as.numeric(fish2$count_fix)
 
 # R correctly identifies the 'actual' number
-unique(fish2$count.num)
+unique(fish2$count_num)
 
 # See the evolution of the 'count' column here
 str(fish2)
+fish2
 
 # This is a shorter one than the others but my need for this function is simple
 # Hope it helps!
