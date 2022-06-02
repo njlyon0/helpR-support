@@ -1,6 +1,6 @@
 # NEW PACKAGE
 
-I have a true R package that can be downloaded from [this GitHub repository](https://github.com/NJLyon-Projects/helpR) that contains all of these functions. Use that instead!
+I have a true R package that can be downloaded from [this GitHub repository](https://github.com/njlyon0/helpR) that contains all of these functions. Use that instead!
 
 ## This repository's purpose
 
